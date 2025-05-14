@@ -19,7 +19,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
   
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);

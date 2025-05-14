@@ -25,7 +25,8 @@ import {
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
   const location = useLocation();
 
   // Helper function to check if a route is active
@@ -54,13 +55,13 @@ export function Sidebar() {
       className={cn("border-r border-border bg-card transition-all", 
         collapsed ? "w-16" : "w-64"
       )}
-      collapsible
+      collapsible="icon"
     >
       <SidebarTrigger className="m-2 self-end" />
 
       <SidebarContent className="p-2">
         {/* Main Navigation */}
-        <SidebarGroup defaultOpen={true}>
+        <SidebarGroup>
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground", 
             collapsed && "sr-only"
           )}>
@@ -90,7 +91,7 @@ export function Sidebar() {
         </SidebarGroup>
 
         {/* Secondary Navigation */}
-        <SidebarGroup defaultOpen={false}>
+        <SidebarGroup>
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground mt-6", 
             collapsed && "sr-only"
           )}>
