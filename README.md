@@ -1,6 +1,6 @@
 # **Hackaton W1**
 
-Este projeto foi desenvolvido com Vite, React, TypeScript, Tailwind CSS e shadcn/ui.
+Este projeto foi desenvolvido com Node e React.
 
 ## Pré-requisitos
 Para rodar o projeto localmente, é necessário ter:
