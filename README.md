@@ -12,15 +12,12 @@ npm (vem junto com o Node.js)
 ## Passo a passo para rodar o projeto
 
 1. Clone o repositório
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/fernandaop/w1-wealth-nexus.git
 
-2. Acesse a pasta do projeto
-cd <NOME_DO_PROJETO>
-
-3. Instale as dependências
+2. Instale as dependências
 npm install
 
-4. Inicie o servidor de desenvolvimento
+3. Inicie o servidor de desenvolvimento
 npm run dev
 
 Após isso, o projeto estará rodando na porta informada pelo terminal.
