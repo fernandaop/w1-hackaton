@@ -35,16 +35,17 @@ const Login = () => {
   return (
     <div className="flex min-h-screen">
       {/* Left side with logo and background */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#192E36] items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#192E36]/80 to-[#192E36]"></div>
-        <div className="w-full h-full absolute flex items-center justify-center">
-          <div className="relative z-10 animate-pulse">
-            <div className="w-72 h-72 rounded-full bg-[#45CFD8]/20 absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"></div>
-            <div className="w-56 h-56 rounded-full bg-[#45CFD8]/30 absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"></div>
-            <div className="w-40 h-40 rounded-full bg-[#45CFD8]/40 absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"></div>
-            <div className="text-white text-9xl font-display font-bold">W1</div>
-          </div>
-        </div>
+      <div
+        className="hidden lg:flex lg:w-1/2 items-center justify-center bg-[#192E36] relative overflow-hidden"
+        style={{
+          clipPath: "polygon(0 0, 85% 0, 100% 100%, 0 100%)",
+        }}
+      >
+        <img
+          src="/logo2.png"
+          alt="Imagem W1"
+          className="w-full h-full object-cover"
+        />
       </div>
 
       {/* Right side with login form */}

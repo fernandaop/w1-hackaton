@@ -10,6 +10,8 @@ import Simulator from "./pages/Simulator";
 import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import Cadastro from "./pages/Cadastro";
+import PostRegistration from "./pages/PostRegistration";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/simulator" element={<Simulator />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/post-registration" element={<PostRegistration />} />
           {/* Additional routes: */}
           <Route path="/reports" element={<Dashboard />} /> {/* Placeholder */}
           <Route path="/clients" element={<Dashboard />} /> {/* Placeholder */}

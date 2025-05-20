@@ -37,16 +37,14 @@ export function Sidebar() {
     isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "hover:bg-sidebar-accent/50";
 
   const mainNavItems = [
-    { name: 'Início', path: '/', icon: Home },
     { name: 'Dashboard', path: '/dashboard', icon: BarChart },
     { name: 'Simulador', path: '/simulator', icon: ChartPie },
     { name: 'Calendário', path: '/calendar', icon: Calendar },
   ];
 
   const secondaryNavItems = [
+    { name: 'Consultor Virtual', path: '/clients', icon: Users },
     { name: 'Relatórios', path: '/reports', icon: FileText },
-    { name: 'Clientes', path: '/clients', icon: Users },
-    { name: 'Ajuda', path: '/help', icon: HelpCircle },
     { name: 'Configurações', path: '/settings', icon: Settings },
   ];
 

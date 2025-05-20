@@ -29,6 +29,7 @@ export default {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
+							  
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
@@ -71,8 +72,14 @@ export default {
 					purple: '#A96CF3',
 					green: '#4CBF9F',
 					coral: '#FB6F5B',
-					light: '#F7FAFD'
-				}
+					light: '#F7FAFD',
+					navy: '#05171e',
+					navy_clear: '#38dccc',
+					navy_clear_click: '#008b8b'
+				},
+			},
+			backgroundImage: {
+				'hero-pattern': "url('/papelada.jpg')"
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
