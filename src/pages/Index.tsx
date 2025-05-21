@@ -168,7 +168,7 @@ const Index = () => {
             
             <div>
 
-            
+          
             <div className="mb-4">
               <p className="text-black font-semibold">Ouvidoria XP</p>
               <p className="text-black-300 mb-2">0800-722-3730</p>

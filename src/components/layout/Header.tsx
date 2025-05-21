@@ -22,7 +22,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white dark:bg-w1.dark border-b border-border flex h-16">
+    <header className="sticky top-0 z-20 w-full bg-white dark:bg-w1.dark border-b border-border flex h-16">
       <div className={cn(
         "flex flex-1 items-center justify-between px-4", 
         !collapsed && "md:pl-4 md:pr-6",

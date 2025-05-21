@@ -1,4 +1,4 @@
-
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Sidebar as SidebarComponent,
@@ -12,15 +12,15 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { 
-  BarChart, 
-  Users, 
-  Calendar, 
+import {
+  BarChart,
+  Users,
+  Calendar,
   Settings,
   HelpCircle,
   FileText,
   Home,
-  ChartPie
+  ChartPie,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -29,12 +29,14 @@ export function Sidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
 
-  // Helper function to check if a route is active
-  const isActive = (path: string) => location.pathname.includes(path);
+  const [userName, setUserName] = useState<string>("");
 
-  // Get the nav link classes with active state
-  const getLinkClass = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "hover:bg-sidebar-accent/50";
+  useEffect(() => {
+    const storedName = localStorage.getItem("userName");
+    if (storedName) setUserName(storedName);
+  }, []);
+
+  const isActive = (path: string) => location.pathname.includes(path);
 
   const mainNavItems = [
     { name: 'Dashboard', path: '/dashboard', icon: BarChart },
@@ -43,26 +45,27 @@ export function Sidebar() {
   ];
 
   const secondaryNavItems = [
-    { name: 'Consultor Virtual', path: '/clients', icon: Users },
-    { name: 'Relatórios', path: '/reports', icon: FileText },
-    { name: 'Configurações', path: '/settings', icon: Settings },
+    { name: 'Consultor Virtual', path: '/chatbot', icon: Users },
+    { name: 'Adicionar Dados', path: '/post-registration', icon: FileText },
   ];
+
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return parts[0].charAt(0).toUpperCase() + parts[1].charAt(0).toUpperCase();
+  };
 
   return (
     <SidebarComponent
-      className={cn("border-r border-border bg-card transition-all", 
-        collapsed ? "w-16" : "w-64"
-      )}
+      className={cn("border-r border-border bg-card transition-all", collapsed ? "w-16" : "w-64")}
       collapsible="icon"
     >
       <SidebarTrigger className="m-2 self-end" />
 
       <SidebarContent className="p-2">
-        {/* Main Navigation */}
+        {/* Principal */}
         <SidebarGroup>
-          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground", 
-            collapsed && "sr-only"
-          )}>
+          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground", collapsed && "sr-only")}>
             Principal
           </SidebarGroupLabel>
 
@@ -74,7 +77,7 @@ export function Sidebar() {
                     <Link
                       to={item.path}
                       className={cn(
-                        "flex items-center gap-3 p-2 rounded-md w-full", 
+                        "flex items-center gap-3 p-2 rounded-md w-full",
                         isActive(item.path) ? "bg-muted text-primary font-medium" : "hover:bg-muted/50"
                       )}
                     >
@@ -88,11 +91,9 @@ export function Sidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Secondary Navigation */}
+        {/* Utilitários */}
         <SidebarGroup>
-          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground mt-6", 
-            collapsed && "sr-only"
-          )}>
+          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground mt-6", collapsed && "sr-only")}>
             Utilitários
           </SidebarGroupLabel>
 
@@ -104,7 +105,7 @@ export function Sidebar() {
                     <Link
                       to={item.path}
                       className={cn(
-                        "flex items-center gap-3 p-2 rounded-md w-full", 
+                        "flex items-center gap-3 p-2 rounded-md w-full",
                         isActive(item.path) ? "bg-muted text-primary font-medium" : "hover:bg-muted/50"
                       )}
                     >
@@ -118,16 +119,15 @@ export function Sidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* User info at the bottom */}
+        {/* Informações do Usuário */}
         {!collapsed && (
           <div className="mt-auto p-4 border-t border-border mt-6">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-w1.purple flex items-center justify-center text-white font-medium">
-                AC
+                {getInitials(userName || "Usuário")}
               </div>
               <div>
-                <p className="text-sm font-medium">André Costa</p>
-                <p className="text-xs text-muted-foreground">Cliente Premium</p>
+                <p className="text-sm font-medium">{userName || "Usuário"}</p>
               </div>
             </div>
           </div>

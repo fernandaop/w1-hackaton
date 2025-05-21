@@ -1,14 +1,15 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,15 +19,26 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    
-    // Simulate login process
+
     try {
-      // This would be replaced with an actual API call in production
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Chamada à API para login
+      const response = await axios.post("http://localhost:8080/api/users/login", {
+        email,
+        password,
+      });
+
+      const { id, token, name } = response.data;
+
+      // Armazenar informações do usuário
+      localStorage.setItem("userId", id);
+      localStorage.setItem("userToken", token);
+      localStorage.setItem("userName", name);
+
       toast.success("Login realizado com sucesso!");
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     } catch (error) {
-      toast.error("Erro ao fazer login. Tente novamente.");
+      console.error("Erro ao fazer login:", error);
+      toast.error("Credenciais inválidas ou erro no servidor.");
     } finally {
       setIsLoading(false);
     }
@@ -34,7 +46,7 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen">
-      {/* Left side with logo and background */}
+      {/* Lado esquerdo com imagem */}
       <div
         className="hidden lg:flex lg:w-1/2 items-center justify-center bg-[#192E36] relative overflow-hidden"
         style={{
@@ -48,7 +60,7 @@ const Login = () => {
         />
       </div>
 
-      {/* Right side with login form */}
+      {/* Lado direito com formulário */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 lg:px-16 xl:px-28 py-12">
         <div className="mx-auto w-full max-w-md space-y-8">
           <div className="flex items-center justify-center lg:hidden mb-12">
@@ -56,39 +68,35 @@ const Login = () => {
               <span className="text-white font-display font-bold text-3xl">W1</span>
             </div>
           </div>
-          
+
           <h1 className="text-3xl font-display font-bold text-gray-900 text-center lg:text-left">
             Acessar conta
           </h1>
-          
+
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <div>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="rounded-lg px-4 py-2 bg-gray-100"
-                />
-              </div>
-              
-              <div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="rounded-lg px-4 py-2 bg-gray-100"
-                />
-              </div>
-              
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="rounded-lg px-4 py-2 bg-gray-100"
+              />
+
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="rounded-lg px-4 py-2 bg-gray-100"
+              />
+
               <div className="flex justify-end">
                 <Link to="/recuperar-senha" className="text-sm text-green-600 hover:text-green-500">
                   Recuperar senha
@@ -103,11 +111,9 @@ const Login = () => {
             >
               {isLoading ? "Carregando..." : "Login"}
             </Button>
-            
+
             <div className="text-center text-sm">
-              <span className="text-gray-600">
-                Ainda não tem uma conta?{" "}
-              </span>
+              <span className="text-gray-600">Ainda não tem uma conta? </span>
               <Link to="/cadastro" className="text-green-600 hover:text-green-500">
                 Cadastre-se
               </Link>

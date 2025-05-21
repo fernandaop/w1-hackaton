@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-// Base URL para a API - substitua pela URL real do seu serviço backend quando estiver pronto
-const API_URL = 'http://localhost:3000/api';  
+const API_URL = 'http://localhost:8080/api';  
 
 // Cliente axios configurado
 const api = axios.create({
@@ -10,6 +9,20 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Interceptador para adicionar token de autenticação nas requisições
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Serviço de usuários
 export const userService = {
@@ -24,6 +37,17 @@ export const userService = {
     }
   },
   
+  // Login de usuário
+  login: async (credentials: { email: string; password: string }) => {
+    try {
+      const response = await api.post('/users/login', credentials);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      throw error;
+    }
+  },
+  
   // Salvar informações adicionais pós-registro
   saveAdditionalInfo: async (userId: string, additionalInfo: any) => {
     try {
@@ -33,5 +57,29 @@ export const userService = {
       console.error('Erro ao salvar informações adicionais:', error);
       throw error;
     }
+  },
+  getDashboardData: async (userId: string) => {
+    const response = await api.get(`/users/${userId}/dashboard`);
+    return response.data;
+  },
+  getCalendarEvents: async (userId: string) => {
+    const response = await api.get(`/users/${userId}/calendar-events`);
+    return response.data;
+  },
+  saveSimulation: async (userId: string, simulation: any) => {
+    const response = await api.post(`/users/${userId}/simulations`, simulation);
+    return response.data;
+  },
+  
+  getSimulations: async (userId: string) => {
+    const response = await api.get(`/users/${userId}/simulations`);
+    return response.data;
+  },
+  getSimulationData: async (userId: string) => {
+    const response = await api.get(`/users/${userId}/simulation-data`);
+    return response.data;
   }
+  
+  
 };
+

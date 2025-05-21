@@ -1,115 +1,93 @@
-
+import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { AssetsSummary } from "@/components/dashboard/AssetsSummary";
-import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
-import { HoldingStructure } from "@/components/dashboard/HoldingStructure";
-import { EventsCalendar } from "@/components/dashboard/EventsCalendar";
-import { VirtualAssistant } from "@/components/assistant/VirtualAssistant";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Battery, CreditCard, Wallet, TrendingUp, TrendingDown } from "lucide-react";
+import { InvestmentPieChart } from "@/components/dashboard/InvestmentPieChart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Wallet, TrendingUp, TrendingDown, ShieldCheck } from "lucide-react";
+import { userService } from "@/services/api";
 
 const Dashboard = () => {
+  const [dashboardData, setDashboardData] = useState<any>(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    userService.getDashboardData(userId)
+      .then((data) => setDashboardData(data))
+      .catch((err) => {
+        console.error("Erro ao carregar dados do dashboard:", err);
+      });
+  }, []);
+
+  const formatCurrency = (value: number) =>
+    `R$ ${Number(value).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+
+  const metricCards = [
+    {
+      title: "Patrimônio Total",
+      icon: <Wallet className="text-primary w-6 h-6" />,
+      value: dashboardData ? formatCurrency(dashboardData.estimatedWealth) : "Carregando...",
+    },
+    {
+      title: "Retorno Anual",
+      icon: <TrendingUp className="text-green-600 w-6 h-6" />,
+      value: dashboardData ? dashboardData.annualReturn : "Carregando...",
+    },
+    {
+      title: "Economia Fiscal",
+      icon: <TrendingDown className="text-yellow-500 w-6 h-6" />,
+      value: dashboardData ? formatCurrency(dashboardData.taxSavings) : "Carregando...",
+    },
+    {
+      title: "Índice de Proteção",
+      icon: <ShieldCheck className="text-blue-600 w-6 h-6" />,
+      value: dashboardData ? `${dashboardData.protectionIndex}%` : "Carregando...",
+    },
+  ];
+
   return (
     <AppLayout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Dashboard Patrimonial</h1>
-        <p className="text-muted-foreground">
-          Acompanhamento e visualização do seu patrimônio
-        </p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-1">Dashboard Patrimonial</h1>
+        <p className="text-muted-foreground">Resumo dos seus ativos financeiros</p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card className="dashboard-card">
-          <CardContent className="p-6">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Patrimônio Total</p>
-                <p className="text-2xl font-bold">R$ 2,45M</p>
-                <p className="text-xs text-green-600 flex items-center mt-1">
-                  <TrendingUp className="h-3 w-3 mr-1" /> +5,2% este mês
-                </p>
-              </div>
-              <div className="bg-w1.blue/10 rounded-lg p-2 h-fit">
-                <Wallet className="h-6 w-6 text-w1.blue" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="dashboard-card">
-          <CardContent className="p-6">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Retorno Anual</p>
-                <p className="text-2xl font-bold">12,8%</p>
-                <p className="text-xs text-green-600 flex items-center mt-1">
-                  <TrendingUp className="h-3 w-3 mr-1" /> +2,1% que IPCA
-                </p>
-              </div>
-              <div className="bg-w1.purple/10 rounded-lg p-2 h-fit">
-                <TrendingUp className="h-6 w-6 text-w1.purple" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="dashboard-card">
-          <CardContent className="p-6">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Economia Fiscal</p>
-                <p className="text-2xl font-bold">R$ 183K</p>
-                <p className="text-xs text-green-600 flex items-center mt-1">
-                  <TrendingUp className="h-3 w-3 mr-1" /> +15% que ano anterior
-                </p>
-              </div>
-              <div className="bg-w1.green/10 rounded-lg p-2 h-fit">
-                <CreditCard className="h-6 w-6 text-w1.green" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="dashboard-card">
-          <CardContent className="p-6">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Índice Proteção</p>
-                <p className="text-2xl font-bold">85%</p>
-                <p className="text-xs text-red-500 flex items-center mt-1">
-                  <TrendingDown className="h-3 w-3 mr-1" /> Meta: 95%
-                </p>
-              </div>
-              <div className="bg-w1.coral/10 rounded-lg p-2 h-fit">
-                <Battery className="h-6 w-6 text-w1.coral" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {metricCards.map((card, idx) => (
+          <Card key={idx} className="shadow-md hover:shadow-lg transition">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
+              {card.icon}
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg font-bold">{card.value}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div className="lg:col-span-2">
-          <PerformanceChart />
+      {dashboardData?.investments?.length > 0 && (
+        <div className="mb-8">
+          <InvestmentPieChart data={dashboardData.investments} />
         </div>
-        <div>
-          <AssetsSummary />
-        </div>
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <div className="grid grid-cols-1 gap-6">
-            <HoldingStructure />
-            <EventsCalendar />
+      {dashboardData?.investments && (
+        <div className="p-6 border rounded-2xl bg-white shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Seus Investimentos</h2>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {dashboardData.investments.map((inv: any, index: number) => (
+              <div key={index} className="p-4 border rounded-xl bg-gray-50 hover:shadow-md transition">
+                <p className="font-semibold">{inv.asset_name} <span className="text-xs text-muted-foreground">({inv.category})</span></p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Investido: <span className="font-medium">{formatCurrency(inv.invested_amount)}</span><br />
+                  Atual: <span className="font-medium">{formatCurrency(inv.current_value)}</span>
+                </p>
+              </div>
+            ))}
           </div>
         </div>
-        <div>
-          <VirtualAssistant />
-        </div>
-      </div>
+      )}
     </AppLayout>
   );
 };

@@ -11,6 +11,7 @@ import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
+import Chatbot from "./pages/Chatbot";
 import PostRegistration from "./pages/PostRegistration";
 
 const queryClient = new QueryClient();
@@ -28,12 +29,8 @@ const App = () => (
           <Route path="/simulator" element={<Simulator />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/post-registration" element={<PostRegistration />} />
-          {/* Additional routes: */}
-          <Route path="/reports" element={<Dashboard />} /> {/* Placeholder */}
-          <Route path="/clients" element={<Dashboard />} /> {/* Placeholder */}
-          <Route path="/help" element={<Dashboard />} /> {/* Placeholder */}
-          <Route path="/settings" element={<Dashboard />} /> {/* Placeholder */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

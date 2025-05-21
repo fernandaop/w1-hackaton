@@ -43,12 +43,22 @@ const Cadastro = () => {
       
       toast.success("Cadastro realizado com sucesso!");
       navigate("/post-registration");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao cadastrar:", error);
-      toast.error("Erro ao cadastrar. Tente novamente.");
-    } finally {
-      setIsLoading(false);
+
+      if (error.response) {
+        console.log("Status:", error.response.status);
+        console.log("Dados do erro:", error.response.data);
+        toast.error(error.response.data?.message || "Erro ao cadastrar. Tente novamente.");
+      } else if (error.request) {
+        console.log("Sem resposta da API:", error.request);
+        toast.error("Sem resposta do servidor. Verifique a API.");
+      } else {
+        console.log("Erro inesperado:", error.message);
+        toast.error("Erro inesperado. Verifique sua conexão.");
+      }
     }
+
   };
 
   return (

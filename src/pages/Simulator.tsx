@@ -1,4 +1,3 @@
-
 import { AppLayout } from "@/components/layout/AppLayout";
 import { HoldingSimulator } from "@/components/simulator/HoldingSimulator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,16 +55,16 @@ const Simulator = () => {
 
       {/* Simulator Tabs */}
       <Tabs defaultValue="holdings">
-        <TabsList className="mb-6 w-full grid grid-cols-3">
+        <TabsList className="mb-6 w-full grid grid-cols-1">
           <TabsTrigger value="holdings">Holdings</TabsTrigger>
-          <TabsTrigger value="succession">Sucessão</TabsTrigger>
-          <TabsTrigger value="tax">Tributação</TabsTrigger>
         </TabsList>
-        
+
+        {/* Holding Simulator (com banco) */}
         <TabsContent value="holdings" className="mt-0">
           <HoldingSimulator />
         </TabsContent>
-        
+
+        {/* Placeholder para sucessão */}
         <TabsContent value="succession" className="mt-0">
           <Card>
             <CardHeader>
@@ -82,7 +81,8 @@ const Simulator = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
+        {/* Placeholder para tributação */}
         <TabsContent value="tax" className="mt-0">
           <Card>
             <CardHeader>
