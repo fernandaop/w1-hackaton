@@ -12,8 +12,7 @@ npm (vem junto com o Node.js)
 ## Passo a passo para rodar
 
 # 1. Clone
-git clone https://github.com/fernandaop/w1-wealth-nexus.git
-cd w1-wealth-nexus
+git clone https://github.com/fernandaop/w1-hackaton.git
 
 # 2. Instale todas as dependências do frontend
 npm install
