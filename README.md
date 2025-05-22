@@ -16,11 +16,13 @@ git clone https://github.com/fernandaop/w1-hackaton.git
 
 # 2. Instale todas as dependências do frontend
 npm install
+npm run start
 
 # 3. Em outra aba do terminal, vá para o backend
 cd backend
 npm install
-npm run start
+npx ts-node index.ts
+
 
 
 

@@ -85,7 +85,7 @@ export function VirtualAssistant() {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <div className="bg-w1.coral rounded-full p-1">
-            <Lightbulb className="h-4 w-4 text-white" />
+            <Lightbulb className="h-4 w-4 text-black" />
           </div>
           Assistente Virtual
         </CardTitle>
