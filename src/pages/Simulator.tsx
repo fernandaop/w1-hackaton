@@ -7,8 +7,8 @@ import { ChartPie, Users, Lightbulb } from "lucide-react";
 const Simulator = () => {
   return (
     <AppLayout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Simulações Patrimoniais</h1>
+    <div className="pt-16 pb-10">
+    <h1 className="text-3xl font-bold mb-1 tracking-tight leading-snug">Simulações Patrimoniais</h1>
         <p className="text-muted-foreground">
           Configure e compare diferentes cenários para otimização patrimonial
         </p>
@@ -55,9 +55,6 @@ const Simulator = () => {
 
       {/* Simulator Tabs */}
       <Tabs defaultValue="holdings">
-        <TabsList className="mb-6 w-full grid grid-cols-1">
-          <TabsTrigger value="holdings">Holdings</TabsTrigger>
-        </TabsList>
 
         {/* Holding Simulator (com banco) */}
         <TabsContent value="holdings" className="mt-0">

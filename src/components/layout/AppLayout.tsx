@@ -1,6 +1,5 @@
 
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { Toaster } from "@/components/ui/sonner";
 

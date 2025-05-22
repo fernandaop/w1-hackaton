@@ -78,16 +78,9 @@ const PostRegistration = () => {
   return (
     <div className="min-h-screen flex bg-gray-50">
       <main className="flex-1 p-6">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2">Sua jornada de construção da Holding</h1>
+      <div className="pt-10 pb-10">
+      <h1 className="text-3xl font-bold mb-1 tracking-tight leading-snug">Sua jornada de construção da Holding</h1>
           <Separator className="mb-6" />
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-xl font-medium">{progress}%</span>
-              <span className="text-sm text-gray-500">Etapa atual: Informações adicionais</span>
-            </div>
-            <Progress value={progress} className="h-2" />
-          </div>
           <Card className="mb-6">
             <CardHeader>
               <CardTitle>Informações adicionais</CardTitle>

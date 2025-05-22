@@ -1,11 +1,37 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ChartPie, Users, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { userService } from "@/services/api";
@@ -15,20 +41,31 @@ export function HoldingSimulator() {
   const [assetsValue, setAssetsValue] = useState("0");
   const [structureType, setStructureType] = useState("familiar");
   const [economy, setEconomy] = useState(0);
+  const [chartData, setChartData] = useState<any[]>([]);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) return;
 
     userService.getSimulationData(userId)
-      .then(data => {
-        setAssetsValue(data.estimatedWealth.toString());
-        setEconomy(data.estimatedWealth * 0.1); // Exemplo de cálculo
+      .then((data) => {
+        const value = parseFloat(data.estimatedWealth);
+        setAssetsValue(value.toString());
+        setEconomy(value * getEconomyPercentage(structureType));
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Erro ao carregar dados da simulação:", err);
       });
   }, []);
+
+  const getEconomyPercentage = (structure: string) => {
+    switch (structure) {
+      case "imobiliaria": return 0.15;
+      case "patrimonial": return 0.10;
+      case "participacoes": return 0.08;
+      default: return 0.12; // familiar
+    }
+  };
 
   const handleSaveSimulation = async () => {
     const userId = localStorage.getItem("userId");
@@ -37,25 +74,50 @@ export function HoldingSimulator() {
       return;
     }
 
+    const assets = parseFloat(assetsValue);
+    const economyPercent = getEconomyPercentage(structureType);
+    const ir = 0.067 * assets;
+    const itcmd = 0.02 * assets;
+    const outros = 0.013 * assets;
+    const economia = assets * economyPercent;
+
     const payload = {
       type: "holding",
       name: `${structureType === "familiar" ? "Simulação" : "Holding"} ${structureType.charAt(0).toUpperCase() + structureType.slice(1)} ${simulationType.charAt(0).toUpperCase() + simulationType.slice(1)}`,
       data: {
         simulationType,
         structureType,
-        assetsValue: parseFloat(assetsValue)
-      }
+        assetsValue: assets,
+      },
     };
 
     try {
       await userService.saveSimulation(userId, payload);
       toast.success("Simulação salva com sucesso!");
-      setEconomy(parseFloat(assetsValue) * 0.1);
+      setEconomy(economia);
+      setChartData([
+        {
+          name: "Cenário Atual",
+          ir: ir,
+          itcmd: itcmd,
+          outros: outros,
+          economia: 0,
+        },
+        {
+          name: "Simulação",
+          ir: ir * (1 - economyPercent),
+          itcmd: itcmd * (1 - economyPercent),
+          outros: outros * (1 - economyPercent),
+          economia: economia,
+        },
+      ]);
     } catch (error) {
       console.error("Erro ao salvar simulação:", error);
       toast.error("Erro ao salvar simulação");
     }
   };
+
+  const protectionIndex = Math.round(getEconomyPercentage(structureType) * 100 + 70);
 
   return (
     <Card className="dashboard-card">
@@ -70,10 +132,6 @@ export function HoldingSimulator() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="simulator" className="w-full">
-          <TabsList className="grid w-full grid-cols-1">
-            <TabsTrigger value="simulator">Simulador</TabsTrigger>
-          </TabsList>
-
           <TabsContent value="simulator" className="space-y-4 mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -97,7 +155,7 @@ export function HoldingSimulator() {
                     id="assetsValue"
                     type="text"
                     value={assetsValue}
-                    onChange={e => setAssetsValue(e.target.value)}
+                    onChange={(e) => setAssetsValue(e.target.value)}
                   />
                 </div>
 
@@ -116,7 +174,10 @@ export function HoldingSimulator() {
                   </Select>
                 </div>
 
-                <Button onClick={handleSaveSimulation} className="w-full bg-w1.green hover:bg-green-600">
+                <Button
+                  onClick={handleSaveSimulation}
+                  className="w-full bg-green-600"
+                >
                   Simular Agora
                 </Button>
               </div>
@@ -150,9 +211,14 @@ export function HoldingSimulator() {
                   <div className="pt-2 border-t">
                     <p className="text-sm mb-1">Proteção Patrimonial</p>
                     <div className="w-full bg-muted rounded-full h-2">
-                      <div className="bg-w1.purple h-2 rounded-full" style={{ width: '85%' }}></div>
+                      <div
+                        className="bg-w1.purple h-2 rounded-full"
+                        style={{ width: `${protectionIndex}%` }}
+                      ></div>
                     </div>
-                    <p className="text-xs text-right mt-1">85% de proteção</p>
+                    <p className="text-xs text-right mt-1">
+                      {protectionIndex}% de proteção
+                    </p>
                   </div>
                 </div>
               </div>
@@ -163,13 +229,17 @@ export function HoldingSimulator() {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={[]}
+                  data={chartData}
                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis tickFormatter={(value) =>
+                    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value)
+                  } />
+                  <Tooltip formatter={(value) =>
+                    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value))
+                  } />
                   <Legend />
                   <Bar name="Imposto de Renda" dataKey="ir" fill="#3B7DED" />
                   <Bar name="ITCMD" dataKey="itcmd" fill="#A96CF3" />

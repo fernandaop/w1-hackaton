@@ -86,8 +86,8 @@ const CalendarPage = () => {
 
   return (
     <AppLayout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Calendário Financeiro</h1>
+    <div className="pt-16 pb-10">
+    <h1 className="text-3xl font-bold mb-1 tracking-tight leading-snug">Calendário Financeiro</h1>
         <p className="text-muted-foreground">
           Acompanhe vencimentos, recebimentos e eventos importantes
         </p>
@@ -125,18 +125,18 @@ const CalendarPage = () => {
             </CardHeader>
             <CardContent>
               <Tabs value={view} onValueChange={setView}>
-                <TabsList className="mb-4 grid w-full grid-cols-3">
+                <TabsList className="mb-4 grid w-full grid-cols-1">
                   <TabsTrigger value="month">Mês</TabsTrigger>
-                  <TabsTrigger value="week">Semana</TabsTrigger>
-                  <TabsTrigger value="day">Dia</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="month" className="mt-0">
+                <div className="flex justify-center">
+
                   <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
-                    className="rounded-md border"
+                    className="w-[300px] rounded-md border"
                     modifiers={{
                       hasEvent: (date) => getEventsByDate(date).length > 0
                     }}
@@ -149,6 +149,8 @@ const CalendarPage = () => {
                       },
                     }}
                   />
+                  </div>
+
                 </TabsContent>
                 
                 <TabsContent value="week" className="mt-0">

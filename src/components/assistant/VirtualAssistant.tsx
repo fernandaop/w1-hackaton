@@ -139,7 +139,7 @@ export function VirtualAssistant() {
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
               className="flex-1"
             />
-            <Button onClick={handleSendMessage} className="bg-w1.purple hover:bg-purple-600">
+            <Button onClick={handleSendMessage} className="bg-purple-600">
               <Send className="h-4 w-4" />
             </Button>
           </div>

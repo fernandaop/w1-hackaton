@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { InvestmentPieChart } from "@/components/dashboard/InvestmentPieChart";
+import { InvestmentBarChart } from "@/components/dashboard/InvestmentBarChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet, TrendingUp, TrendingDown, ShieldCheck } from "lucide-react";
 import { userService } from "@/services/api";
@@ -47,14 +48,14 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-1">Dashboard Patrimonial</h1>
-        <p className="text-muted-foreground">Resumo dos seus ativos financeiros</p>
-      </div>
+    <div className="pt-16 pb-10">
+    <h1 className="text-3xl font-bold mb-1 tracking-tight leading-snug">Dashboard Patrimonial</h1>
+      <p className="text-muted-foreground">Resumo dos seus ativos financeiros</p>
+    </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {metricCards.map((card, idx) => (
-          <Card key={idx} className="shadow-md hover:shadow-lg transition">
+          <Card key={idx} className="rounded-xl border bg-white shadow-sm hover:shadow-md transition">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium text-muted-foreground">{card.title}</CardTitle>
               {card.icon}
@@ -67,9 +68,16 @@ const Dashboard = () => {
       </div>
 
       {dashboardData?.investments?.length > 0 && (
-        <div className="mb-8">
+        <section className="p-6 bg-white rounded-xl shadow-sm mb-8">
           <InvestmentPieChart data={dashboardData.investments} />
-        </div>
+        </section>
+
+      )}
+
+      {dashboardData?.investments?.length > 0 && (
+        <section className="p-6 bg-white rounded-xl shadow-sm mb-8">
+          <InvestmentBarChart data={dashboardData.investments} />
+        </section>
       )}
 
       {dashboardData?.investments && (

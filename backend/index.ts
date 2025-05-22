@@ -89,14 +89,22 @@ app.post('/api/users/register', async (req, res) => {
 
 app.post('/api/users/:id/additional-info', async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id);
-  const { companyName, cnpj, industrySegment, estimatedWealth, assetGoals } = req.body;
+  const { companyName, cnpj, industrySegment, estimatedWealth, assetGoals, taxSavings } = req.body;
 
   try {
     await pool.query(
       `INSERT INTO user_additional_info
-        (user_id, company_name, cnpj, industry_segment, estimated_wealth, asset_goals)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [userId, companyName, cnpj, industrySegment, estimatedWealth, assetGoals]
+        (user_id, company_name, cnpj, industry_segment, estimated_wealth, tax_savings, asset_goals)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       ON CONFLICT (user_id)
+       DO UPDATE SET
+         company_name = $2,
+         cnpj = $3,
+         industry_segment = $4,
+         estimated_wealth = $5,
+         tax_savings = $6,
+         asset_goals = $7`,
+      [userId, companyName, cnpj, industrySegment, estimatedWealth, taxSavings, assetGoals]
     );
     res.status(201).json({ message: 'Informações salvas com sucesso' });
   } catch (err) {
@@ -110,7 +118,7 @@ app.get('/api/users/:id/dashboard', async (req: Request<{ id: string }>, res: Re
 
   try {
     const info = await pool.query(
-      `SELECT estimated_wealth FROM user_additional_info WHERE user_id = $1`,
+      `SELECT estimated_wealth, tax_savings FROM user_additional_info WHERE user_id = $1`,
       [userId]
     );
 
@@ -131,7 +139,7 @@ app.get('/api/users/:id/dashboard', async (req: Request<{ id: string }>, res: Re
       return;
     }
 
-    const { estimated_wealth } = info.rows[0];
+    const { estimated_wealth, tax_savings } = info.rows[0];
     const { total_invested, total_current } = resumo.rows[0];
 
     const returnPercentage =
@@ -142,7 +150,7 @@ app.get('/api/users/:id/dashboard', async (req: Request<{ id: string }>, res: Re
     res.json({
       estimatedWealth: estimated_wealth,
       annualReturn: returnPercentage,
-      taxSavings: 183000,
+      taxSavings: tax_savings ?? 0,
       protectionIndex: 85,
       investments: inv.rows
     });
@@ -151,6 +159,7 @@ app.get('/api/users/:id/dashboard', async (req: Request<{ id: string }>, res: Re
     res.status(500).json({ message: 'Erro ao calcular dashboard' });
   }
 });
+
 
 app.get('/api/users/:id/calendar-events', async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id);
