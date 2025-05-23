@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api';  
+const API_URL = "https://w1-hackaton.onrender.com/api";
 
 // Cliente axios configurado
 const api = axios.create({
@@ -9,6 +9,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
 
 // Interceptador para adicionar token de autenticação nas requisições
 api.interceptors.request.use(
