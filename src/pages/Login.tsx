@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import axios from "axios";
+import { userService } from "@/services/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,12 +22,9 @@ const Login = () => {
 
     try {
       // Chamada à API para login
-      const response = await axios.post("http://localhost:8080/api/users/login", {
-        email,
-        password,
-      });
+      const response = await userService.login({ email, password });
 
-      const { id, token, name } = response.data;
+      const { id, token, name } = response;
 
       // Armazenar informações do usuário
       localStorage.setItem("userId", id);
