@@ -13,13 +13,10 @@ const port = 8080;
 app.use(cors());
 app.use(express.json());
 
-// Conexão com PostgreSQL
+
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'w1db',
-  password: 'familia3',
-  port: 5433,
+  connectionString: "postgres://w1db_user:pCbtjZgYAenhIxraX9s2rx6rARmNtqCI@dpg-d0o9nlqli9vc73fr73n0-a.oregon-postgres.render.com:5432/w1db",
+  ssl: { rejectUnauthorized: false }
 });
 
 // Inicializar OpenAI
