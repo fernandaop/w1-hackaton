@@ -34,7 +34,6 @@ import {
 } from "@/components/ui/select";
 import { ChartPie, Users, FileText } from "lucide-react";
 import { toast } from "sonner";
-import { userService } from "@/services/api";
 
 export function HoldingSimulator() {
   const [simulationType, setSimulationType] = useState("basic");
@@ -44,79 +43,41 @@ export function HoldingSimulator() {
   const [chartData, setChartData] = useState<any[]>([]);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) return;
-
-    userService.getSimulationData(userId)
-      .then((data) => {
-        const value = parseFloat(data.estimatedWealth);
-        setAssetsValue(value.toString());
-        setEconomy(value * getEconomyPercentage(structureType));
-      })
-      .catch((err) => {
-        console.error("Erro ao carregar dados da simulação:", err);
-      });
+    // Removido: carregamento automático com dados do banco
   }, []);
-
-  const getEconomyPercentage = (structure: string) => {
-    switch (structure) {
-      case "imobiliaria": return 0.15;
-      case "patrimonial": return 0.10;
-      case "participacoes": return 0.08;
-      default: return 0.12; // familiar
-    }
-  };
-
-  const handleSaveSimulation = async () => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      toast.error("Usuário não autenticado");
+  
+  const handleSaveSimulation = () => {
+    const assets = parseFloat(assetsValue);
+    if (isNaN(assets) || assets <= 0) {
+      toast.error("Informe um valor de ativos válido.");
       return;
     }
-
-    const assets = parseFloat(assetsValue);
+  
     const economyPercent = getEconomyPercentage(structureType);
     const ir = 0.067 * assets;
     const itcmd = 0.02 * assets;
     const outros = 0.013 * assets;
     const economia = assets * economyPercent;
-
-    const payload = {
-      type: "holding",
-      name: `${structureType === "familiar" ? "Simulação" : "Holding"} ${structureType.charAt(0).toUpperCase() + structureType.slice(1)} ${simulationType.charAt(0).toUpperCase() + simulationType.slice(1)}`,
-      data: {
-        simulationType,
-        structureType,
-        assetsValue: assets,
+  
+    setEconomy(economia);
+    setChartData([
+      {
+        name: "Cenário Atual",
+        ir: ir,
+        itcmd: itcmd,
+        outros: outros,
+        economia: 0,
       },
-    };
-
-    try {
-      await userService.saveSimulation(userId, payload);
-      toast.success("Simulação salva com sucesso!");
-      setEconomy(economia);
-      setChartData([
-        {
-          name: "Cenário Atual",
-          ir: ir,
-          itcmd: itcmd,
-          outros: outros,
-          economia: 0,
-        },
-        {
-          name: "Simulação",
-          ir: ir * (1 - economyPercent),
-          itcmd: itcmd * (1 - economyPercent),
-          outros: outros * (1 - economyPercent),
-          economia: economia,
-        },
-      ]);
-    } catch (error) {
-      console.error("Erro ao salvar simulação:", error);
-      toast.error("Erro ao salvar simulação");
-    }
+      {
+        name: "Simulação",
+        ir: ir * (1 - economyPercent),
+        itcmd: itcmd * (1 - economyPercent),
+        outros: outros * (1 - economyPercent),
+        economia: economia,
+      },
+    ]);
+    toast.success("Simulação realizada com sucesso!");
   };
-
   const protectionIndex = Math.round(getEconomyPercentage(structureType) * 100 + 70);
 
   return (
