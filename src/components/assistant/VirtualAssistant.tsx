@@ -117,7 +117,7 @@ export function VirtualAssistant() {
               <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[80%] rounded-lg p-3 ${
-                    message.sender === "user" ? "bg-w1.blue text-white" : "bg-muted"
+                    message.sender === "user" ? "bg-w1.blue text-black" : "bg-muted"
                   }`}
                 >
                   {message.sender === "assistant" && (
