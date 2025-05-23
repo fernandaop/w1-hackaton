@@ -63,6 +63,14 @@ export function Sidebar() {
       <SidebarTrigger className="m-2 self-end" />
 
       <SidebarContent className="p-3 flex flex-col h-full">
+
+      <div className="flex justify-center mb-6">
+        <img
+          src="/W1_White.png"
+          alt="Logo W1"
+          className={cn("h-10 transition-all", collapsed && "h-8")}
+        />
+      </div>
         <SidebarGroup>
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground mb-2", collapsed && "sr-only")}>
             Navegação

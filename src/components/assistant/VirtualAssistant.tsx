@@ -6,7 +6,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Lightbulb, Send } from "lucide-react";
-
+import { userService } from "@/services/api";
 interface Message {
   id: number;
   content: string;
@@ -51,19 +51,35 @@ export function VirtualAssistant() {
         return;
       }
 
-      const res = await fetch("http://localhost:8080/api/assistant/query", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, question: input }),
-      });
+    // Respostas manuais para perguntas frequentes
+    const manualAnswers: Record<string, string> = {
+      "como funciona uma holding": "Uma holding é uma empresa criada para controlar outras empresas ou bens, facilitando a gestão patrimonial, sucessão familiar e planejamento tributário.",
+      "redução de impostos": "A redução de impostos pode ser feita por meio de planejamento tributário, como criação de holding, escolha do regime adequado e aproveitamento de incentivos fiscais.",
+      "analisar investimentos": "Para analisar investimentos, verifique rentabilidade histórica, risco, liquidez e se está alinhado aos seus objetivos patrimoniais.",
+    };
 
-      const data = await res.json();
-      const assistantMessage: Message = {
-        id: messages.length + 2,
-        content: data.answer || "Desculpe, não encontrei uma resposta.",
-        sender: "assistant",
-        timestamp: new Date(),
-      };
+    const lowerInput = input.toLowerCase().trim();
+    for (const key in manualAnswers) {
+      if (lowerInput.includes(key)) {
+        const assistantMessage: Message = {
+          id: messages.length + 2,
+          content: manualAnswers[key],
+          sender: "assistant",
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        return;
+      }
+    }
+
+    // Se não houver resposta manual, segue com a IA
+    const res = await userService.askAssistant(userId, input);
+    const assistantMessage: Message = {
+      id: messages.length + 2,
+      content: res.answer || "Desculpe, não encontrei uma resposta.",
+      sender: "assistant",
+      timestamp: new Date(),
+    };
 
       setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {

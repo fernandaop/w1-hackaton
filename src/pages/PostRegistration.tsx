@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { Folder, Building, FileCheck } from "lucide-react";
 import { userService } from "@/services/api";
@@ -15,7 +14,6 @@ import { userService } from "@/services/api";
 const PostRegistration = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [progress] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [companyName, setCompanyName] = useState("");
@@ -28,48 +26,61 @@ const PostRegistration = () => {
   const [mainAssets, setMainAssets] = useState("");
   const [hasInternationalAssets, setHasInternationalAssets] = useState(false);
   const [hasFamilyProtocol, setHasFamilyProtocol] = useState(false);
+  const [assetName, setAssetName] = useState("");
+  const [category, setCategory] = useState("");
+  const [investedAmount, setInvestedAmount] = useState("");
+  const [currentValue, setCurrentValue] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [eventType, setEventType] = useState("");
+  const [eventDescription, setEventDescription] = useState("");
+  const [eventAmount, setEventAmount] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     const userId = localStorage.getItem("userId");
     if (!userId) {
-      toast({
-        title: "Erro",
-        description: "Usuário não encontrado. Refaça o cadastro.",
-        variant: "destructive",
-      });
+      toast({ title: "Erro", description: "Usuário não encontrado.", variant: "destructive" });
       setLoading(false);
       return;
     }
-
     try {
       await userService.saveAdditionalInfo(userId, {
-        companyName,
-        cnpj,
-        industrySegment,
-        estimatedWealth,
-        assetGoals,
-        companyFoundationDate,
-        numberOfPartners,
-        mainAssets,
-        hasInternationalAssets,
-        hasFamilyProtocol
+        companyName, cnpj, industrySegment, estimatedWealth, assetGoals,
+        companyFoundationDate, numberOfPartners, mainAssets,
+        hasInternationalAssets, hasFamilyProtocol
       });
-
-      toast({
-        title: "Informações enviadas",
-        description: "Suas informações foram salvas com sucesso.",
-      });
+      toast({ title: "Informações enviadas", description: "Sucesso." });
       navigate("/dashboard");
     } catch (err) {
-      console.error("Erro ao enviar informações adicionais:", err);
-      toast({
-        title: "Erro",
-        description: "Não foi possível salvar os dados.",
-        variant: "destructive",
+      console.error("Erro:", err);
+      toast({ title: "Erro", description: "Não foi possível salvar.", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInvestmentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+    try {
+      const payload = {
+        assetName, category, investedAmount, currentValue,
+        eventDate, eventType, eventDescription, eventAmount,
+      };
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === "" || payload[key] === null) delete payload[key];
       });
+      await userService.saveInvestment(userId, payload);
+      toast({ title: "Investimento salvo", description: "Sucesso." });
+      setAssetName(""); setCategory(""); setInvestedAmount("");
+      setCurrentValue(""); setEventDate(""); setEventType("");
+      setEventDescription(""); setEventAmount("");
+    } catch (err) {
+      console.error("Erro:", err);
+      toast({ title: "Erro", description: "Não foi possível salvar investimento", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -78,51 +89,26 @@ const PostRegistration = () => {
   return (
     <div className="min-h-screen flex bg-gray-50">
       <main className="flex-1 p-6">
-      <div className="pt-10 pb-10">
-      <h1 className="text-3xl font-bold mb-1 tracking-tight leading-snug">Sua jornada de construção da Holding</h1>
+        <div className="pt-10 pb-10">
+          <h1 className="text-3xl font-bold mb-1 tracking-tight leading-snug">Sua jornada de construção da Holding</h1>
           <Separator className="mb-6" />
+
           <Card className="mb-6">
             <CardHeader>
               <CardTitle>Informações adicionais</CardTitle>
-              <CardDescription>
-                Por favor, forneça informações adicionais para personalizarmos nossos serviços
-              </CardDescription>
+              <CardDescription>Personalize nossos serviços</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} id="post-registration-form">
                 <div className="grid gap-6">
-                  <div className="grid gap-3">
-                    <Label htmlFor="company">Nome da empresa</Label>
-                    <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="cnpj">CNPJ</Label>
-                    <Input id="cnpj" value={cnpj} onChange={(e) => setCnpj(e.target.value)} required />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="segment">Segmento de atuação</Label>
-                    <Input id="segment" value={industrySegment} onChange={(e) => setIndustrySegment(e.target.value)} required />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="assets">Patrimônio estimado</Label>
-                    <Input id="assets" value={estimatedWealth} onChange={(e) => setEstimatedWealth(e.target.value)} required />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="objectives">Objetivos patrimoniais</Label>
-                    <Textarea id="objectives" value={assetGoals} onChange={(e) => setAssetGoals(e.target.value)} className="min-h-[100px]" required />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="foundation">Data de Fundação da Empresa</Label>
-                    <Input id="foundation" type="date" value={companyFoundationDate} onChange={(e) => setCompanyFoundationDate(e.target.value)} />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="partners">Número de Sócios</Label>
-                    <Input id="partners" type="number" value={numberOfPartners} onChange={(e) => setNumberOfPartners(e.target.value)} />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="mainAssets">Principais Ativos</Label>
-                    <Textarea id="mainAssets" value={mainAssets} onChange={(e) => setMainAssets(e.target.value)} />
-                  </div>
+                  <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Nome da empresa" />
+                  <Input id="cnpj" value={cnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="CNPJ" />
+                  <Input id="segment" value={industrySegment} onChange={(e) => setIndustrySegment(e.target.value)} placeholder="Segmento" />
+                  <Input id="assets" value={estimatedWealth} onChange={(e) => setEstimatedWealth(e.target.value)} placeholder="Patrimônio estimado" />
+                  <Textarea id="objectives" value={assetGoals} onChange={(e) => setAssetGoals(e.target.value)} className="min-h-[100px]" placeholder="Objetivos" />
+                  <Input id="foundation" type="date" value={companyFoundationDate} onChange={(e) => setCompanyFoundationDate(e.target.value)} />
+                  <Input id="partners" type="number" value={numberOfPartners} onChange={(e) => setNumberOfPartners(e.target.value)} placeholder="Número de sócios" />
+                  <Textarea id="mainAssets" value={mainAssets} onChange={(e) => setMainAssets(e.target.value)} placeholder="Principais ativos" />
                   <div className="flex items-center space-x-2">
                     <Checkbox id="internationalAssets" checked={hasInternationalAssets} onCheckedChange={() => setHasInternationalAssets(!hasInternationalAssets)} />
                     <Label htmlFor="internationalAssets">Possui ativos no exterior</Label>
@@ -133,16 +119,38 @@ const PostRegistration = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="terms" required />
-                    <Label htmlFor="terms" className="text-sm font-normal">
-                      Autorizo o tratamento dos meus dados de acordo com a Política de Privacidade
-                    </Label>
+                    <Label htmlFor="terms" className="text-sm font-normal">Autorizo o tratamento de dados</Label>
                   </div>
                 </div>
               </form>
             </CardContent>
             <CardFooter className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => navigate("/")}>Voltar</Button>
-              <Button type="submit" form="post-registration-form" disabled={loading}>{loading ? "Enviando..." : "Enviar informações"}</Button>
+              <Button type="submit" form="post-registration-form" disabled={loading}>{loading ? "Enviando..." : "Enviar"}</Button>
+            </CardFooter>
+          </Card>
+
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Adicionar Investimentos</CardTitle>
+              <CardDescription>Cadastre seus ativos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleInvestmentSubmit} id="investment-form">
+                <div className="grid gap-6">
+                  <Input id="assetName" value={assetName} onChange={(e) => setAssetName(e.target.value)} placeholder="Nome do ativo" />
+                  <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Categoria" />
+                  <Input id="investedAmount" type="number" value={investedAmount} onChange={(e) => setInvestedAmount(e.target.value)} placeholder="Valor investido" />
+                  <Input id="currentValue" type="number" value={currentValue} onChange={(e) => setCurrentValue(e.target.value)} placeholder="Valor atual" />
+                  <Input id="eventDate" type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
+                  <Input id="eventType" value={eventType} onChange={(e) => setEventType(e.target.value)} placeholder="Tipo do evento" />
+                  <Textarea id="eventDescription" value={eventDescription} onChange={(e) => setEventDescription(e.target.value)} placeholder="Descrição do evento" />
+                  <Input id="eventAmount" type="number" value={eventAmount} onChange={(e) => setEventAmount(e.target.value)} placeholder="Valor do evento" />
+                </div>
+              </form>
+            </CardContent>
+            <CardFooter className="flex justify-end gap-2">
+              <Button type="submit" form="investment-form" disabled={loading}>{loading ? "Salvando..." : "Salvar Investimento"}</Button>
             </CardFooter>
           </Card>
 
@@ -154,7 +162,7 @@ const PostRegistration = () => {
               <div className="space-y-6">
                 <StepItem icon={<Folder className="h-6 w-6" />} title="Organização de documentos" status="Em desenvolvimento" />
                 <StepItem icon={<Building className="h-6 w-6" />} title="Estruturação Jurídica" status="Em desenvolvimento" />
-                <StepItem icon={<FileCheck className="h-6 w-6" />} title="Execução e registro" status="Em desenvolvimento"  />
+                <StepItem icon={<FileCheck className="h-6 w-6" />} title="Execução e registro" status="Em desenvolvimento" />
               </div>
             </CardContent>
           </Card>
@@ -163,7 +171,6 @@ const PostRegistration = () => {
     </div>
   );
 };
-
 
 interface StepItemProps {
   icon: React.ReactNode;

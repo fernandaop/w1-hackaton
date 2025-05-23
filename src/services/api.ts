@@ -78,7 +78,15 @@ export const userService = {
   getSimulationData: async (userId: string) => {
     const response = await api.get(`/users/${userId}/simulation-data`);
     return response.data;
-  }
+  },
+  saveInvestment: async (userId: string, investment: any) => {
+    const response = await api.post(`/users/${userId}/investments`, investment);
+    return response.data;
+  }, 
+  askAssistant: async (userId: string, question: string) => {
+    const response = await api.post(`/assistant/query`, { userId, question });
+    return response.data;
+  }  
   
   
 };

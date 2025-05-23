@@ -251,6 +251,32 @@ Com base nisso, gere uma resposta consultiva e personalizada em português.
     res.status(500).json({ message: "Erro ao processar pergunta com a IA" });
   }
 });
+app.post('/api/users/:id/investments', async (req, res) => {
+  const userId = parseInt(req.params.id);
+  const {
+    assetName, category, investedAmount, currentValue,
+    eventDate, eventType, eventDescription, eventAmount
+  } = req.body;
+
+  try {
+    await pool.query(
+      `INSERT INTO user_investments (
+        user_id, asset_name, category, invested_amount,
+        current_value, event_date, event_type, event_description, event_amount
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [
+        userId, assetName, category, investedAmount,
+        currentValue, eventDate || null, eventType || null,
+        eventDescription || null, eventAmount || null
+      ]
+    );
+    res.status(201).json({ message: 'Investimento salvo com sucesso' });
+  } catch (err) {
+    console.error('Erro ao salvar investimento:', err instanceof Error ? err.message : err);
+    res.status(500).json({ message: 'Erro ao salvar investimento' });
+  }
+});
+
 
 // Iniciar servidor
 app.listen(port, () => {
