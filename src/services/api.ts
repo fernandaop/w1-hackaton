@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const API_URL = "https://w1-hackaton.onrender.com/api";
-
+const API_URL = import.meta.env.VITE_API_URL || "https://w1-hackaton.onrender.com/api";
 // Cliente axios configurado
 const api = axios.create({
   baseURL: API_URL,
