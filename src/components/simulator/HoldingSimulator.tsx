@@ -34,7 +34,20 @@ import {
 } from "@/components/ui/select";
 import { ChartPie, Users, FileText } from "lucide-react";
 import { toast } from "sonner";
-
+function getEconomyPercentage(structureType: string): number {
+  switch (structureType) {
+    case "familiar":
+      return 0.4;
+    case "imobiliaria":
+      return 0.35;
+    case "patrimonial":
+      return 0.5;
+    case "participacoes":
+      return 0.45;
+    default:
+      return 0.3;
+  }
+}
 export function HoldingSimulator() {
   const [simulationType, setSimulationType] = useState("basic");
   const [assetsValue, setAssetsValue] = useState("0");
