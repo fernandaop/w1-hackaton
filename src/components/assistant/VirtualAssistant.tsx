@@ -130,7 +130,7 @@ export function VirtualAssistant() {
                       <span className="text-xs font-medium">Assistente W1</span>
                     </div>
                   )}
-                  <p className={`text-sm ${message.sender === "user" ? "text-white" : ""}`}>
+                  <p className={`text-sm ${message.sender === "user" ? "text-black" : ""}`}>
                     {message.content}
                   </p>
                 </div>
